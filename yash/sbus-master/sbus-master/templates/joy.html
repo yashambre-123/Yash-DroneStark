@@ -1,0 +1,315 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Remote Control</title>
+		<meta charset="utf-8">
+		<link rel="shortcut icon" type="image/png" href="http://bobboteck.github.io/img/roberto-damico-bobboteck.png">
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				margin: 0px;
+				padding: 0px;
+				font-family: monospace;
+			}
+			.container {
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
+				grid-gap: 20px;
+				padding: 20px;
+			}
+			.joystick-container {
+				width: 100%;
+				text-align: center;
+			}
+			.joystick-container-gimbal {
+				width: 100%;
+				text-align: center;
+			}
+			.joystick {
+				width: 200px;
+				height: 200px;
+				margin: 0 auto;
+				border: 1px solid #000;
+			}
+			.joystick-gimbal {
+				width: 600px;
+				height: 600px;
+				margin: 0 auto;
+				border: 1px solid #000;
+			}
+			.slider-container {
+				margin-top: 30px;
+			}
+			.slider-label {
+				display: block;
+				text-align: center;
+			}
+			.slider {
+				width: 300px;
+				margin: 0 auto;
+			}
+			.joystick-heading {
+				font-weight: bold;
+				font-size: 16px;
+				margin-bottom: 10px;
+			}
+			.toggle-button {
+				appearance: none;
+				-webkit-appearance: none;
+				border: none;
+				border-radius: 20px;
+				background-color: #ccc;
+				width: 60px;
+				height: 34px;
+				cursor: pointer;
+				position: relative;
+				overflow: hidden;
+			}
+
+			.toggle-button:before {
+				content: "";
+				position: absolute;
+				top: 2px;
+				left: 2px;
+				width: 30px;
+				height: 30px;
+				background-color: #fff;
+				border-radius: 50%;
+				transition: 0.4s;
+			}
+
+			.toggle-button.active:before {
+				transform: translateX(26px);
+			}
+		</style>
+		<script src="/static/joy.js"></script>
+	</head>
+	<body>
+		<div class="slider-container">
+			<div class="joystick-heading">Slider 2</div>
+			<input id="slider2" class="slider" type="range" min="0" max="100" step="1" value="0">
+			<span id="sliderValue2">0</span>
+		</div>
+
+		<div class="slider-container">
+			<div class="joystick-heading">Toggle Switch 2</div>
+			<button id="toggleButton2" class="toggle-button"></button>
+			<span id="toggleValue2">0</span>
+		</div>
+		<div class="container">
+			<div class="joystick-container">
+				<div class="joystick-heading">Joy1: Forward and Backward Control</div>
+				<div id="joy1Div" class="joystick"></div>
+				Position X:<input id="joy1PosizioneX" type="text" /><br />
+				Position Y:<input id="joy1PosizioneY" type="text" /><br />
+				Direction:<input id="joy1Direzione" type="text" /><br />
+				X :<input id="joy1X" type="text" /><br />
+				Y :<input id="joy1Y" type="text" />
+			</div>
+			<div class="joystick-container">
+				<div class="joystick-heading">Joy2: Left and Right Control</div>
+				<div id="joy2Div" class="joystick"></div>
+				Position X:<input id="joy2PosizioneX" type="text" /><br />
+				Position Y:<input id="joy2PosizioneY" type="text" /><br />
+				Direction:<input id="joy2Direzione" type="text" /><br />
+				X :<input id="joy2X" type="text" /><br />
+				Y :<input id="joy2Y" type="text" />
+			</div>
+		</div>
+		<div class="slider-container">
+			<div class="joystick-heading">Slider 1</div>
+			<input id="slider" class="slider" type="range" min="0" max="100" step="1" value="0">
+			<span id="sliderValue">0</span>
+		</div>		
+		
+		<div class="slider-container">
+			<div class="joystick-heading">Toggle Switch 1</div>
+			<button id="zoomButton" class="toggle-button"></button>
+			<span id="zoomValue">0</span>
+		</div>
+
+		<script type="text/javascript">
+			function sendDataToServer(stickData) {
+				fetch("/joystick_data", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(stickData),
+				})
+				.then((response) => response.text())
+				.then((data) => console.log(data))
+				.catch((error) => console.error(error));
+			}
+			// Create JoyStick object into the DIV 'joy1Div'
+			// var joy1Param = {"autoReturnToCenter": false };
+			var Joy1 = new JoyStick('joy1Div', {}, function(stickData) {
+				stickData.x = parseInt(stickData.x); // Convert to integer
+				stickData.y = parseInt(stickData.y); // Convert to integer
+				document.getElementById("joy1Div").value = stickData.joyname;
+				document.getElementById("joy1PosizioneX").value = stickData.xPosition;
+				document.getElementById("joy1PosizioneY").value = stickData.yPosition;
+				document.getElementById("joy1Direzione").value = getDirectionDescription(stickData.cardinalDirection, stickData.x, stickData.y);
+				document.getElementById("joy1X").value = stickData.x;
+				document.getElementById("joy1Y").value = stickData.y;
+				sendDataToServer({"joy1Div": stickData});
+			});
+			// Create JoyStick object into the DIV 'joy2Div'
+			var Joy2 = new JoyStick('joy2Div', {}, function(stickData) {
+				stickData.x = parseInt(stickData.x); // Convert to integer
+				stickData.y = parseInt(stickData.y); // Convert to integer
+				document.getElementById("joy2Div").value = stickData.joyname;
+				document.getElementById("joy2PosizioneX").value = stickData.xPosition;
+				document.getElementById("joy2PosizioneY").value = stickData.yPosition;
+				document.getElementById("joy2Direzione").value = getDirectionDescription(stickData.cardinalDirection, stickData.x, stickData.y);
+				document.getElementById("joy2X").value = stickData.x;
+				document.getElementById("joy2Y").value = stickData.y;
+				sendDataToServer({"joy2Div": stickData});
+			});
+			// Get references to the slider and its value display element
+			var slider = document.getElementById("slider");
+			var sliderValue = document.getElementById("sliderValue");
+
+			// Add an event listener to track slider value changes
+			slider.addEventListener("input", function() {
+				var value = slider.value;
+				sliderValue.textContent = value; // Display the current value
+				sendSliderValueToServer(value); // Send the value to the server if needed
+			});
+
+			// Get references to the new slider and its value display element
+			var slider2 = document.getElementById("slider2");
+			var sliderValue2 = document.getElementById("sliderValue2");
+
+			// Add an event listener to track slider2 value changes
+			slider2.addEventListener("input", function() {
+				var value2 = slider2.value;
+				sliderValue2.textContent = value2; // Display the current value
+				sendSlider2ValueToServer(value2); // Send the value to the server if needed
+			});
+
+			// Toggle switch button event listener for the new toggle switch
+			var toggleButton2 = document.getElementById("toggleButton2");
+			var toggleValue2 = document.getElementById("toggleValue2");
+			var toggleState2 = false;
+
+			toggleButton2.addEventListener("click", function() {
+				toggleState2 = !toggleState2;
+				var value2 = toggleState2 ? 100 : 0;
+				toggleValue2.textContent = value2;
+				sendToggle2ToServer(value2);
+				updateToggle2ButtonStyle();
+			});
+
+			function updateToggle2ButtonStyle() {
+				if (toggleState2) {
+					toggleButton2.classList.add("active");
+				} else {
+					toggleButton2.classList.remove("active");
+				}
+			}
+
+			// Initialize the toggle2 value and button style
+			toggleValue2.textContent = "0";
+			updateToggle2ButtonStyle();
+
+			function sendSlider2ValueToServer(sliderValue2) {
+				fetch("/slider2_data", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ sliderValue2: sliderValue2 }),
+				})
+				.then((response) => response.text())
+				.then((data) => console.log(data))
+				.catch((error) => console.error(error));
+			}
+
+			function sendToggle2ToServer(toggleValue2) {
+				fetch("/toggle2_data", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ toggleValue2: toggleValue2 }),
+				})
+				.then((response) => response.text())
+				.then((data) => console.log(data))
+				.catch((error) => console.error(error));
+			}
+
+			function getDirectionDescription(cardinalDirection, x, y) {
+				if (cardinalDirection === "N") {
+					return "forward";
+				} else if (cardinalDirection === "S") {
+					return "backward";
+				} else if (cardinalDirection === "E") {
+					return "right";
+				} else if (cardinalDirection === "W") {
+					return "left";
+				} else if (x !== 0) {
+					return "pan";
+				} else if (y !== 0) {
+					return "tilt";
+				} else {
+					return "neutral";
+				}
+			}
+			// Toggle switch button event listener
+			var zoomButton = document.getElementById("zoomButton");
+			var zoomValue = document.getElementById("zoomValue");
+			var zoomState = false;
+
+			zoomButton.addEventListener("click", function() {
+				zoomState = !zoomState;
+				var value = zoomState ? 100 : 0;
+				zoomValue.textContent = value;
+				sendZoomToServer(value);
+				updateButtonStyle();
+			});
+
+			function updateButtonStyle() {
+				if (zoomState) {
+					zoomButton.classList.add("active");
+				} else {
+					zoomButton.classList.remove("active");
+				}
+			}
+
+			// Initialize the zoom value and button style
+			zoomValue.textContent = "0";
+			updateButtonStyle();
+
+			function sendZoomToServer(zoomValue) {
+				fetch("/zoom_data", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ zoom: zoomValue }),
+				})
+				.then((response) => response.text())
+				.then((data) => console.log(data))
+				.catch((error) => console.error(error));
+			}
+
+			function sendSliderValueToServer(sliderValue) {
+				fetch("/slider_data", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ sliderValue: sliderValue }),
+				})
+				.then((response) => response.text())
+				.then((data) => console.log(data))
+				.catch((error) => console.error(error));
+			}
+
+		</script>
+	</body>
+</html>
+
