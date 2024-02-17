@@ -1,0 +1,23 @@
+{
+    "name": "basic-socket",
+    "version": "0.0.1",
+    "description": "Communication between HTML/JavaScript and Arduino",
+    "dependencies": {
+        "express": "^4.18.2",
+        "http": "0.0.1-security",
+        "libxmljs": "^1.0.11",
+        "node-gyp": "^10.0.1",
+        "path": "^0.12.7",
+        "serialport": "^9.0.1",
+        "socket.io": "^4.7.4",
+        "text-encoder": "0.0.4",
+        "utf8": "^3.0.0",
+        "util": "^0.12.5",
+        "utils": "^0.3.1",
+        "whatwg-url": "^14.0.0"
+    },
+    "optionalDependencies": {
+        "bufferutil": "^4.0.8",
+        "utf-8-validate": "^6.0.3"
+    }
+}
