@@ -1,0 +1,63 @@
+function sendDataToServerNewLeftLeftRight() {
+    document.getElementById('controller-b10').innerHTML = buggy_left_right;
+    var value = document.getElementById('controller-b10').innerHTML;
+    var stick_data_new_left_left_right = {"a": value};
+            fetch("/joystick_data_new", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(stick_data_new_left_left_right),
+            })
+            .then((response) => response.text())
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error));
+        }
+
+  function sendDataToServerNewLeftUpDown() {
+    document.getElementById('controller-b10').innerHTML = buggy_up_down;
+    var value = document.getElementById('controller-b10').innerHTML;
+    var stick_data_new_left_up_down = {"b": value};
+            fetch("/joystick_data_new", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(stick_data_new_left_up_down),
+            })
+            .then((response) => response.text())
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error));
+        }
+
+  function sendDataToServerNewRightLeftRight() {
+    document.getElementById('controller-b11').innerHTML = camera_left_right;
+    var value = document.getElementById('controller-b11').innerHTML;
+    var stick_data_new_right_left_right = {"c": value};
+            fetch("/joystick_data_new", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(stick_data_new_right_left_right),
+            })
+            .then((response) => response.text())
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error));
+        }
+
+  function sendDataToServerNewRightUpDown() {
+    document.getElementById('controller-b11').innerHTML = camera_up_down;
+    var value = document.getElementById('controller-b11').innerHTML;
+    var stick_data_new_right_up_down = {"d": value};
+            fetch("/joystick_data_new", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(stick_data_new_right_up_down),
+            })
+            .then((response) => response.text())
+            .then((data) => console.log(data))
+            .catch((error) => console.error(error));
+        }
