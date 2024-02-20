@@ -1,3 +1,4 @@
+///this is correct one
 #include "sbus.h"
 #include <Servo.h>
 
@@ -285,13 +286,11 @@ void remote_rc_data() {
 
 void physical_rc() {
   if (Serial.available()) {
-    String data1 = Serial.readStringUntil('\n');
+    String data1 = Serial.readStringUntil('k');
     if (data1.startsWith("PHYSICAL_REMOTE")) {
       int parsed_values[9];
 
       int parsed_count = sscanf(data1.c_str(), "PHYSICAL_REMOTE,%d,%d,%d,%d,%d,%d,%d,%d", &parsed_values[0], &parsed_values[1], &parsed_values[2], &parsed_values[3], &parsed_values[4], &parsed_values[5], &parsed_values[6], &parsed_values[7]);
-
-      Serial.println(parsed_count);
 
       if (parsed_count == 8) {
         physical_roll_value = parsed_values[0];
@@ -344,8 +343,8 @@ void physical_rc() {
         sbus_tx_serial.Write();
 
         physical_remote_radio_data.ch[0] = map(physical_remote_radio_data.ch[0], 170, 1811, 1000, 2000);
-        physical_remote_radio_data.ch[1] = map(physical_remote_radio_data.ch[1], 1811, 170, 2000, 1000);
-        physical_remote_radio_data.ch[2] = map(physical_remote_radio_data.ch[2], 1811, 170, 2000, 1000);
+        physical_remote_radio_data.ch[1] = map(physical_remote_radio_data.ch[1], 170, 1811, 1000, 2000);
+        physical_remote_radio_data.ch[2] = map(physical_remote_radio_data.ch[2], 170, 1811, 1000, 2000);
         physical_remote_radio_data.ch[3] = map(physical_remote_radio_data.ch[3], 170, 1811, 1000, 2000);
         physical_remote_radio_data.ch[4] = map(physical_remote_radio_data.ch[4], 170, 1811, 1000, 2000);
         physical_remote_radio_data.ch[5] = map(physical_remote_radio_data.ch[5], 170, 1811, 1000, 2000);
@@ -353,30 +352,30 @@ void physical_rc() {
         physical_remote_radio_data.ch[7] = map(physical_remote_radio_data.ch[7], 170, 1811, 1000, 2000);
 
         physical_remote_radio_data.ch[0] = constrain(physical_remote_radio_data.ch[0], 1000, 2000);
-        physical_remote_radio_data.ch[1] = constrain(physical_remote_radio_data.ch[1], 2000, 1000);
-        physical_remote_radio_data.ch[2] = constrain(physical_remote_radio_data.ch[2], 2000, 1000);
+        physical_remote_radio_data.ch[1] = constrain(physical_remote_radio_data.ch[1], 1000, 2000);
+        physical_remote_radio_data.ch[2] = constrain(physical_remote_radio_data.ch[2], 1000, 2000);
         physical_remote_radio_data.ch[3] = constrain(physical_remote_radio_data.ch[3], 1000, 2000);
         physical_remote_radio_data.ch[4] = constrain(physical_remote_radio_data.ch[4], 1000, 2000);
         physical_remote_radio_data.ch[5] = constrain(physical_remote_radio_data.ch[5], 1000, 2000);
         physical_remote_radio_data.ch[6] = constrain(physical_remote_radio_data.ch[6], 1000, 2000);
         physical_remote_radio_data.ch[7] = constrain(physical_remote_radio_data.ch[7], 1000, 2000);
 
-        //        Serial.print("   Roll: ");
-        //        Serial.print(physical_remote_radio_data.ch[0]);
-        //        Serial.print("   Pitch: ");
-        //        Serial.print(physical_remote_radio_data.ch[1]);
-        //        Serial.print("   Throttle: ");
-        //        Serial.print(physical_remote_radio_data.ch[2]);
-        //        Serial.print("   Yaw: ");
-        //        Serial.print(physical_remote_radio_data.ch[3]);
-        //        Serial.print("   Toggle 1: ");
-        //        Serial.print(physical_remote_radio_data.ch[4]);
-        //        Serial.print("   Slider 1: ");
-        //        Serial.print(physical_remote_radio_data.ch[5]);
-        //        Serial.print("   Toggle 2: ");
-        //        Serial.print(physical_remote_radio_data.ch[6]);
-        //        Serial.print("   Slider 2: ");
-        //        Serial.println(physical_remote_radio_data.ch[7]);
+        Serial.print(physical_remote_radio_data.ch[0]);
+        Serial.print("  ");
+        Serial.print(physical_remote_radio_data.ch[1]);
+        Serial.print("  ");
+        Serial.print(physical_remote_radio_data.ch[2]);
+        Serial.print("  ");
+        Serial.print(physical_remote_radio_data.ch[3]);
+        Serial.print("  ");
+        Serial.print(physical_remote_radio_data.ch[4]);
+        Serial.print("  ");
+        Serial.print(physical_remote_radio_data.ch[5]);
+        Serial.print("  ");
+        Serial.print(physical_remote_radio_data.ch[6]);
+        Serial.print("  ");
+        Serial.print(physical_remote_radio_data.ch[7]);
+        Serial.println(" ");
 
         pwm1.writeMicroseconds(physical_remote_radio_data.ch[0]);
         pwm2.writeMicroseconds(physical_remote_radio_data.ch[1]);
