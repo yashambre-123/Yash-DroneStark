@@ -34,7 +34,7 @@ var port = new SerialPort('/dev/ttyUSB0',{
 port.pipe(parser);
 
 app.get('/', (req, res) => {
-    res.sendFile(join(__dirname, '/templates/joy2.html'));
+    res.sendFile(join(__dirname, '/templates/joy3.html'));
     // res.sendFile(join(__dirname, '/static/joy2.js'));
 });
 
