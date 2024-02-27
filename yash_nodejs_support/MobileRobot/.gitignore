@@ -1,0 +1,8 @@
+# Ignore sw* files
+*.swl
+*.swm
+*.swp
+*.swo
+
+# Ignore pycache folder
+__pycache__

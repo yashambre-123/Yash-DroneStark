@@ -1,0 +1,11 @@
+    # define range of blue color in HSV
+    lower_thresh_blue = np.array([90,50,50])
+    upper_thresh_blue = np.array([110,255,255])
+    
+    #for green color
+    lower_thresh_blue = np.array([64,74,77])
+    upper_thresh_blue = np.array([83,232,114])
+    
+    # define range of yellow color in HSV
+    lower_thresh = np.array([30,120,20])
+    upper_thresh = np.array([45,255,255]) 
