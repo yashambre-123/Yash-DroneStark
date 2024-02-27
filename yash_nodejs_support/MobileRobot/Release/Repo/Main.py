@@ -11,7 +11,7 @@ from Image import *
 from Utils import *
 from qr_detect_test import decodeQR
 
-ser = serial.Serial("/dev/ttyACM1", baudrate = 115200, bytesize = serial.EIGHTBITS, parity = serial.PARITY_NONE, xonxoff = False, rtscts = False, stopbits = serial.STOPBITS_ONE, timeout = 1, dsrdtr = True)
+ser = serial.Serial("/dev/ttyACM0", baudrate = 115200, bytesize = serial.EIGHTBITS, parity = serial.PARITY_NONE, xonxoff = False, rtscts = False, stopbits = serial.STOPBITS_ONE, timeout = 1, dsrdtr = True)
 checkBlue = 0
 lineFoundFlag = 0
 t1 = 0
@@ -158,7 +158,7 @@ def main():
     countU = 0
     signal.signal(signal.SIGINT, stop_to_quit)
     try:
-        camera = cv2.VideoCapture(2)
+        camera = cv2.VideoCapture(0)
         # print(camera)                     
         print("Main")
         while True:   
