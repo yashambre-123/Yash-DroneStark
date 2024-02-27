@@ -1998,7 +1998,26 @@ var JoyStick = (function(container, parameters, callback)
               camera_left_right = Math.trunc(camera_left_right);
               camera_up_down = Math.trunc(camera_up_down);*/
 
-              if ((buggy_left_right > 0.0 || buggy_left_right < -0.0) || (buggy_front_back > 0.0 || buggy_front_back < -0.0) || (camera_left_right > 0.0 || camera_left_right < -0.0) || (camera_up_down > 0.0 || camera_up_down < -0.0)){
+              // start for PS4 controller
+
+              /*if ((buggy_left_right > 0.0 || buggy_left_right < -0.0) || (buggy_front_back > 0.0 || buggy_front_back < -0.0) || (camera_left_right > 0.0 || camera_left_right < -0.0) || (camera_up_down > 0.0 || camera_up_down < -0.0)){
+                buggy_left_right = map_value(buggy_left_right, -1, 1, 170, 1811);
+                buggy_front_back = map_value(buggy_front_back, -1, 1, 1811, 170);
+                camera_left_right = map_value(camera_left_right, -1, 1, 1811, 170);
+                camera_up_down = map_value(camera_up_down, -1, 1, 170, 1811);
+
+                buggy_left_right = Math.trunc(buggy_left_right);
+                buggy_front_back = Math.trunc(buggy_front_back);
+                camera_left_right = Math.trunc(camera_left_right);
+                camera_up_down = Math.trunc(camera_up_down);
+                send_rc_values_joystick(buggy_front_back, buggy_left_right, camera_left_right, camera_up_down, slider_1, slider_2, zoom_value, toggle_2);
+              }*/
+
+              // end for PS4 controller
+
+              // start for xbox controller
+
+              if ((buggy_left_right > 0.19 || buggy_left_right < -0.19) || (buggy_front_back > 0.15 || buggy_front_back < -0.15) || (camera_left_right > 0.15 || camera_left_right < -0.15) || (camera_up_down > 0.15 || camera_up_down < -0.15)){
                 buggy_left_right = map_value(buggy_left_right, -1, 1, 170, 1811);
                 buggy_front_back = map_value(buggy_front_back, -1, 1, 1811, 170);
                 camera_left_right = map_value(camera_left_right, -1, 1, 1811, 170);
@@ -2010,6 +2029,8 @@ var JoyStick = (function(container, parameters, callback)
                 camera_up_down = Math.trunc(camera_up_down);
                 send_rc_values_joystick(buggy_front_back, buggy_left_right, camera_left_right, camera_up_down, slider_1, slider_2, zoom_value, toggle_2);
               }
+
+              // end for xbox controller
 
               /*if (buggy_left_right > 0.25 || buggy_left_right < -0.25){
                 //sendDataToServerNewbugleftright(buggy_left_right)
