@@ -335,6 +335,7 @@ def main():
                         # print("go in this direction: ", to_go)
                     
                     print("go in these directions: ", my_direction_list)
+                        
                     
                     # datapacket = ser.readline()
                     # datapacket = str(datapacket,'utf-8')
@@ -346,15 +347,14 @@ def main():
                             send_direction = 'S'
                             if (send_direction == 'S'):
                                 goForward()
-                                print("MASK")
-                            print("TASK")
+                            # noLineCount = 0
+                            # lineFoundFlag = findLine(frame, noLineCount)
                             # while (ser.in_waiting==0):
                             #     pass
-                            datapacket = ser.readline()
-                            datapacket = str(datapacket,'utf-8')
-                            datapacket = datapacket.strip('\r\n')
-                            print(datapacket)
-                            print("KASK")
+                            # datapacket = ser.readline()
+                            # datapacket = str(datapacket,'utf-8')
+                            # datapacket = datapacket.strip('\r\n')
+                            # print(datapacket)
                         else:
                             # camera1 = cv2.VideoCapture(1)
                             # universal_direction = matrix[my_dict[my_direction_list[i]]][my_dict[my_direction_list[i+1]]]
@@ -365,34 +365,46 @@ def main():
                                 cv2.imshow("Follow Image", frame1)
                                 if cv2.waitKey(1) == ord('c'):
                                     break
-
-                                decodedData = findQRcode(frame1)
-                                if decodedData == "":
-                                    # print("show the complete qr code")
-                                    continue
-                                else:
-                                    decodedData = str(decodedData)
-                                    decodedData = decodedData.split("'")
-                                    decodedData = int(decodedData[1])
-                                    
-                                    if (decodedData != motionPath[i]):
-                                        print("wrong qr detected")
+                                
+                                checkBlue = checkBlueColor(frame1)
+                                
+                                if (checkBlue != 1):
+                                    noLineCount = 0
+                                    lineFoundFlag = findLine(frame1, noLineCount)
+                                    if (lineFoundFlag == 0):
+                                        # print("NOT ON THE LINE")
+                                        pass
                                     else:
-                                        send_direction = matrix[my_dict[my_cardinal_direction_list[i-1]]][my_dict[my_cardinal_direction_list[i]]]
-                                        if (send_direction == 'S'):
-                                            goForward()
-                                        elif (send_direction == 'R'):
-                                            rightTurn()
-                                        elif (send_direction == 'L'):
-                                            leftTurn()
-                                        elif (send_direction == 'T'):
-                                            aboutTurn()
+                                        print("FOLLOWING THE LINE")
+                                    
+                                elif (checkBlue == 1):    
+                                    decodedData = findQRcode(frame1)
+                                    if decodedData == "":
+                                        # print("show the complete qr code")
+                                        continue
+                                    else:
+                                        decodedData = str(decodedData)
+                                        decodedData = decodedData.split("'")
+                                        decodedData = int(decodedData[1])
                                         
-                                        datapacket = ser.readline()
-                                        datapacket = str(datapacket,'utf-8')
-                                        datapacket = datapacket.strip('\r\n')
-                                        print(datapacket)
-                                        break
+                                        if (decodedData != motionPath[i]):
+                                            print("wrong qr detected")
+                                        else:
+                                            send_direction = matrix[my_dict[my_cardinal_direction_list[i-1]]][my_dict[my_cardinal_direction_list[i]]]
+                                            if (send_direction == 'S'):
+                                                goForward()
+                                            elif (send_direction == 'R'):
+                                                rightTurn()
+                                            elif (send_direction == 'L'):
+                                                leftTurn()
+                                            elif (send_direction == 'T'):
+                                                aboutTurn()
+                                            
+                                            datapacket = ser.readline()
+                                            datapacket = str(datapacket,'utf-8')
+                                            datapacket = datapacket.strip('\r\n')
+                                            print(datapacket)
+                                            break
                                 # break
                     print("-------------------REACHED DESTINATION-------------------")               
                     
@@ -426,7 +438,12 @@ def main():
                 
             else:
                 noLineCount = 0
-                lineFoundFlag = findLine(frame, noLineCount)                
+                lineFoundFlag = findLine(frame, noLineCount)
+                if (lineFoundFlag == 0):
+                    # print("NOT ON THE LINE")
+                    pass
+                else:
+                    print("FOLLOWING THE LINE")                
                 #maskFrame = imgBlue + imgYellow
             #print(countLeft)    
             if(countLeft > 5):
@@ -435,6 +452,7 @@ def main():
                 countRight = 0
             if(countU > 5):
                 countU = 0
+                
             #cv2.imshow("blue image", imgBlue)
             #cv2.imshow("yellow image", imgYellow)
             t2 = time.process_time()
