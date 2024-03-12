@@ -5,7 +5,7 @@ import pdb
 import serial, struct
 import cv2
 import time
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 #import wiringpi
 
 from Image import *
@@ -15,7 +15,7 @@ motion = 0
 turn = 0
 mode = 1 
 direction = "straight"
-ser = serial.Serial("/dev/ttyAMA0", baudrate = 115200, bytesize = serial.EIGHTBITS, parity = serial.PARITY_NONE, xonxoff = False, rtscts = False, stopbits = serial.STOPBITS_ONE, timeout = 1, dsrdtr = True)
+ser = serial.Serial("/dev/ttyACM1", baudrate = 115200, bytesize = serial.EIGHTBITS, parity = serial.PARITY_NONE, xonxoff = False, rtscts = False, timeout = 1, dsrdtr = True)
 
 # register handler for virtual pin V11 reading
 
@@ -79,7 +79,7 @@ def main():
     signal.signal(signal.SIGINT, stop_to_quit)
     global direction
     try:
-        camera = cv2.VideoCapture(0)
+        camera = cv2.VideoCapture(1)
         while True:
             if(1):
                 _, frame = camera.read()
@@ -97,6 +97,11 @@ def main():
                 contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
                 # Bitwise-AND mask and original image
                 img = cv2.bitwise_and(frame,frame, mask= mask)
+                cv2.imshow("Only yellow color", img)
+                
+                # if cv2.waitKey(1) == ord('c'):
+                #     break
+            
                 if(len(contours) != 0):
                     if img is not None:
                         """
@@ -142,14 +147,14 @@ def main():
                         fm = RepackImages(Images)
                         t2 = time.process_time()
                         global t1
-                        print((t2-t1)*1000)
+                        # print((t2-t1)*1000)
                         t1 = t2
                         """
                         fm = cv2.rectangle(fm, start_roi_l_point, end_roi_l_point, color, thickness)
                         fm = cv2.rectangle(fm, start_roi_r_point, end_roi_r_point, color, thickness)
                         fm = cv2.putText(fm, direction, (50,50), cv2.FONT_HERSHEY_SIMPLEX ,  0.5, (255,0,0), 2, cv2.LINE_AA) 
                         """ 
-                        #cv2.imshow("Mobo Vision", fm)
+                        cv2.imshow("Mobo Vision", fm)
                         if cv2.waitKey(1) & 0xFF == ord('q'):
                             break
                     else:

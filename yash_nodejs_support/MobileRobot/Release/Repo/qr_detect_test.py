@@ -16,7 +16,7 @@ next_node = 2
 
 prev_node = 0
 
-#camera = cv2.VideoCapture(0)
+# camera = cv2.VideoCapture(1)
 
 # Display barcode and QR code location
 def display(im, bbox):
@@ -97,7 +97,7 @@ def decodeQR(data, next_node, prev_node):
 
     return -1, -1, valid
 
-"""
+'''
 while(True):
     qr_name = qr_list[2]
     #inputImage = cv2.imread(qr_name)
@@ -107,6 +107,7 @@ while(True):
     # Detect and decode the qrcode
     data,bbox,rectifiedImage = qrDecoder.detectAndDecode(inputImage)
     if len(data)>0:
+        print("QR Code detected")
         #print("Decoded Data : {}".format(data))
         display(inputImage, bbox)
         #rectifiedImage = np.uint8(rectifiedImage);
@@ -119,4 +120,5 @@ while(True):
 
 cv2.waitKey(1)
 cv2.destroyAllWindows()
-"""
+
+'''

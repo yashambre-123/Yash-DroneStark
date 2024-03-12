@@ -183,44 +183,38 @@ def main():
                 # print("CheckBlue: ", checkBlue)  
                 stop_no_line()                                
                 decodedData = findQRcode(frame)
+		
+                print(decodedData)
                 
-                if decodedData == "":
-                    continue
-                else:
-                    decodedData = str(decodedData)
-                    decodedData = decodedData.split("'")
-                    # decodedData = decodedData.replace('b','1',1)
-                    decodedData = decodedData[1]
-                    print(int(decodedData))
-                    
-                    
-                    # if(decodedData == b'left'):
-                    #     if(countLeft == 0):
-                    #         leftTurn()
-                    #         print("sent left")
-                    #     countLeft += 1
-                    #     #time.sleep(3)
-                    # elif(decodedData == b'right'):
-                    #     if(countRight == 0):
-                    #         rightTurn()
-                    #         print("sent right")
-                    #     countRight += 1
-                    #     #time.sleep(3)
-                    # elif (decodedData == b'aboutturn'):
-                    #     if(countU == 0):
-                    #         #stop_no_line()
-                    #         aboutTurn()
-                    #         print("sent about turn")
-                    #     countU += 1
-                    # else:
-                    #     pass
-                    #     # print("Nothing")
-                    
-                    
-                    
-                    # cv2.imshow("grayscale",im)imgYellow
-                    #maskFrame = imgBlue
-                    checkBlue = 0
+                
+                
+                # if(decodedData == b'left'):
+                #     if(countLeft == 0):
+                #         leftTurn()
+                #         print("sent left")
+                #     countLeft += 1
+                #     #time.sleep(3)
+                # elif(decodedData == b'right'):
+                #     if(countRight == 0):
+                #         rightTurn()
+                #         print("sent right")
+                #     countRight += 1
+                #     #time.sleep(3)
+                # elif (decodedData == b'aboutturn'):
+                #     if(countU == 0):
+                #         #stop_no_line()
+                #         aboutTurn()
+                #         print("sent about turn")
+                #     countU += 1
+                # else:
+                #     pass
+                #     # print("Nothing")
+                
+                
+                
+                # cv2.imshow("grayscale",im)imgYellow
+                #maskFrame = imgBlue
+                checkBlue = 0
             else:
                 # print("Detecting yellow line")
                 # print("CheckBlue: ", checkBlue)

@@ -9,9 +9,28 @@ import time
 import pyzbar.pyzbar as pyzbar
 from Image import *
 from Utils import *
-from qr_detect_test import decodeQR
+import qr_detect_test as qr
+import yash_path_find as pf
+import argparse
+import time
+from csv import reader
+# import sys
 
-ser = serial.Serial("/dev/ttyAMA0", baudrate = 115200, bytesize = serial.EIGHTBITS, parity = serial.PARITY_NONE, xonxoff = False, rtscts = False, stopbits = serial.STOPBITS_ONE, timeout = 1, dsrdtr = True)
+# end_node = sys.argv[1]
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--world", type=str, default="/home/dronestark/Yash-DroneStark/yash_nodejs_support/MobileRobot/Debug/Repo/yash_new_qr_map.json")
+parser.add_argument("--start", type=int, default=0)
+parser.add_argument("--end", type=int, default=0)
+parser.add_argument("--room", type=int, default=1)
+parser.add_argument("--mode", type=int, default=0)
+parser.add_argument("--data_port", type=int, default=40000)
+
+args = parser.parse_args()
+
+print("END NODE: ", args.end)
+
+ser = serial.Serial("/dev/ttyACM0", baudrate = 115200, bytesize = serial.EIGHTBITS, parity = serial.PARITY_NONE, xonxoff = False, rtscts = False, stopbits = serial.STOPBITS_ONE, timeout = 1, dsrdtr = True)
 checkBlue = 0
 lineFoundFlag = 0
 prev_theta = 0
@@ -23,8 +42,17 @@ ret = b'R'
 lineOrient = [0]*(N_SLICES-1)
 deltaX = [0]*(N_SLICES-1)
 
+# universal_direction = 'y'
+# universal_cardinal = 'y'
+
 for q in range(N_SLICES):
     Images.append(Image())
+
+
+with open('/home/dronestark/Yash-DroneStark/yash_nodejs_support/MobileRobot/Debug/Repo/ds_node_table.csv', 'r') as read_obj:
+        csv_reader = reader(read_obj)
+        header = next(csv_reader)
+        data = list(csv_reader)
     
 def stop_to_quit(sig, frame):
     print("Sending stopping signal")
@@ -120,8 +148,8 @@ def checkBlueColor(frame):
     global checkBlue
     checkBlue = 0
     # define range of blue color in HSV
-    lower_thresh_blue = np.array([90,120,50])
-    upper_thresh_blue = np.array([110,255,200])
+    lower_thresh_blue = np.array([116,62,83])
+    upper_thresh_blue = np.array([179,255,255])
     # Threshold the HSV image to get only blue color
     maskBlue = cv2.inRange(hsv, lower_thresh_blue, upper_thresh_blue)
     #add erode to remove unneccessory blue color
@@ -171,7 +199,7 @@ def findLine(frame, noLineCount):
             #print("toSendDeltaX")
             #print(toSendDeltaX)
             fm = RepackImages(Images)
-            #cv2.imshow("Mobo Vision", fm)
+            cv2.imshow("Mobo Vision", fm)
             #if cv2.waitKey(1) & 0xFF == ord('q'):
             #    pass
         else:
@@ -181,7 +209,47 @@ def findLine(frame, noLineCount):
         stop_no_line()
         noLineCount += 1
     #return lineFoundFlag
-    return noLineCount
+    # return noLineCount
+    return lineFoundFlag
+
+def getMotionPath(worldGraph, start_node, end_node):
+    motionPath = pf.getPath(worldGraph, str(start_node), str(end_node))
+    motionPath = [int(i) for i in motionPath]
+
+    print(motionPath)
+    return motionPath
+
+def get_motion_path_directions(start_node, end_node):
+    header_counter = -1
+    
+    for row in data:
+        row[0] = int(row[0])
+        row[1] = int(row[1])
+        row[2] = int(row[2])
+        row[3] = int(row[3])
+        row[4] = int(row[4])
+        
+        if (row[0] == start_node):
+            for i in row:
+                header_counter = header_counter + 1
+                if (i == end_node):
+                    return header[header_counter]
+
+def new_func(frame, next_node):
+    
+    decoded_data = findQRcode(frame)
+    
+    if (decoded_data == ""):
+        pass
+    else:
+        decodedData = str(decodedData)
+        decodedData = decodedData.split("'")
+        decodedData = int(decodedData[1])
+        
+        if (decoded_data != next_node):
+            print("going in wrong direction")
+        elif (decoded_data == next_node):
+            return "ok"
 
 def main():
     global lineFoundFlag
@@ -191,45 +259,174 @@ def main():
     countRight = 0
     countU = 0
     signal.signal(signal.SIGINT, stop_to_quit)
+    worldGraph = pf.getWorld(args.world, args.room)
+    
     try:
         camera = cv2.VideoCapture(0)                                
         print("Main")
-        while True:   
+        while True:
+            # global universal_direction
+            # global universal_cardinal
             _, frame = camera.read() 
             frame = cv2.resize(frame,(240,180), cv2.INTER_AREA)
+            cv2.imshow("Original Image", frame)
+            if cv2.waitKey(1) == ord('c'):
+                break
             #checkBlue, imgBlue = checkBlueColor(frame)
             checkBlue = checkBlueColor(frame)
             if(checkBlue == 1):  
                 stop_no_line()                                
                 decodedData = findQRcode(frame)
-                print(decodedData)
-                """
-                if(decodedData == b'left'):
-                    if(countLeft == 0):
-                        leftTurn()
-                        print("sent left")
-                    countLeft += 1
-                    #time.sleep(3)
-                elif(decodedData == b'right'):
-                    if(countRight == 0):
-                        rightTurn()
-                        print("sent right")
-                    countRight += 1
-                    #time.sleep(3)
-                elif (decodedData == b'aboutturn'):
-                    if(countU == 0):
-                        #stop_no_line()
-                        aboutTurn()
-                        print("sent about turn")
-                    countU += 1
+                if decodedData == "":
+                    # print("show the complete qr code")
+                    continue
                 else:
-                    pass
-                """
+                    decodedData = str(decodedData)
+                    decodedData = decodedData.split("'")
+                    decodedData = int(decodedData[1])
+                    # decodedData = str(decodedData)
+                    # print("DECODED DATA: ", decodedData)
+                    
+                    start_node = decodedData
+                    
+                    end_node = args.end
+                    
+                    motionPath = getMotionPath(worldGraph, start_node, end_node)        # get path to follow
+                    
+                    print("MotionPath: ",motionPath)
+                    
+                    my_cardinal_direction_list = []
+                    
+                    my_direction_list = []
+                    
+                    # print("OUR MOTION PATH: ", motionPath)
+                    
+                    for nnodes in range(len(motionPath) - 1):
+                        current_node = motionPath[nnodes]
+                        next_node = motionPath[nnodes + 1]
+                        direction_to_take = get_motion_path_directions(current_node, next_node)
+                        my_cardinal_direction_list.append(direction_to_take)
+                        # print("go towards: ", direction_to_take)
+                        # status = new_func(frame, next_node)
+                    
+                    print("these are cardinal directions: ", my_cardinal_direction_list)
+                    
+                    matrix = [
+                        ['S','R','L','T'],
+                        ['L','S','T','R'],
+                        ['R','T','S','L'],
+                        ['T','L','R','S']
+                    ]
+                    
+                    my_dict = {
+                        "North": 0,
+                        "East": 1,
+                        "West": 2,
+                        "South": 3
+                    }
+                    
+                    my_direction_list.append('S')
+                    
+                    for i in range(len(my_cardinal_direction_list)-1):
+                        curr_direc = my_cardinal_direction_list[i]
+                        next_direc = my_cardinal_direction_list[i+1]
+                        to_go = matrix[my_dict[my_cardinal_direction_list[i]]][my_dict[my_cardinal_direction_list[i+1]]]
+                        my_direction_list.append(to_go)
+                        # print("go in this direction: ", to_go)
+                    
+                    print("go in these directions: ", my_direction_list)
+                    
+                    # datapacket = ser.readline()
+                    # datapacket = str(datapacket,'utf-8')
+                    # datapacket = datapacket.strip('\r\n')
+                    # print(datapacket)
+                    
+                    for i in range(len(motionPath) - 1):
+                        if (i==0):
+                            send_direction = 'S'
+                            if (send_direction == 'S'):
+                                goForward()
+                                print("MASK")
+                            print("TASK")
+                            # while (ser.in_waiting==0):
+                            #     pass
+                            datapacket = ser.readline()
+                            datapacket = str(datapacket,'utf-8')
+                            datapacket = datapacket.strip('\r\n')
+                            print(datapacket)
+                            print("KASK")
+                        else:
+                            # camera1 = cv2.VideoCapture(1)
+                            # universal_direction = matrix[my_dict[my_direction_list[i]]][my_dict[my_direction_list[i+1]]]
+                            while True:
+                                # print("FOLLOW MODE")
+                                _1, frame1 = camera.read() 
+                                frame1 = cv2.resize(frame1,(240,180), cv2.INTER_AREA)
+                                cv2.imshow("Follow Image", frame1)
+                                if cv2.waitKey(1) == ord('c'):
+                                    break
+
+                                decodedData = findQRcode(frame1)
+                                if decodedData == "":
+                                    # print("show the complete qr code")
+                                    continue
+                                else:
+                                    decodedData = str(decodedData)
+                                    decodedData = decodedData.split("'")
+                                    decodedData = int(decodedData[1])
+                                    
+                                    if (decodedData != motionPath[i]):
+                                        print("wrong qr detected")
+                                    else:
+                                        send_direction = matrix[my_dict[my_cardinal_direction_list[i-1]]][my_dict[my_cardinal_direction_list[i]]]
+                                        if (send_direction == 'S'):
+                                            goForward()
+                                        elif (send_direction == 'R'):
+                                            rightTurn()
+                                        elif (send_direction == 'L'):
+                                            leftTurn()
+                                        elif (send_direction == 'T'):
+                                            aboutTurn()
+                                        
+                                        datapacket = ser.readline()
+                                        datapacket = str(datapacket,'utf-8')
+                                        datapacket = datapacket.strip('\r\n')
+                                        print(datapacket)
+                                        break
+                                # break
+                    print("-------------------REACHED DESTINATION-------------------")               
+                    
+                    # if (universal_direction == 'S'):
+                    #     goForward()
+                        
+                    # elif (universal_direction == 'R'):
+                    #     rightTurn()
+                    
+                    # elif (universal_direction == 'L'):
+                    #     leftTurn()
+                    
+                    # elif (universal_direction == 'T'):
+                    #     aboutTurn()
+                    # for i in my_direction_list:
+                    #     if (i=='S'):
+                    #         goForward()
+                    #     elif (i=='R'):
+                    #         rightTurn()
+                    #     elif (i=='L'):
+                    #         leftTurn()
+                    #     elif (i=='T'):
+                    #         aboutTurn()
+                    
+                    # arcs = ser.readline()
+                    # print("from ARDUINO: ",arcs)
+                            
                 #cv2.imshow("grayscale",im)
                 #maskFrame = imgBlue
                 checkBlue = 0
+                
             else:
-                lineFoundFlag = findLine(frame)                
+                noLineCount = 0
+                lineFoundFlag = findLine(frame, noLineCount)                
                 #maskFrame = imgBlue + imgYellow
             #print(countLeft)    
             if(countLeft > 5):
@@ -242,12 +439,13 @@ def main():
             #cv2.imshow("yellow image", imgYellow)
             t2 = time.process_time()
             global t1 
-            print((t2-t1)*1000)
+            # print((t2-t1)*1000)
             t1 = t2
             
             #if cv2.waitKey(1) & 0xFF == ord('q'):
             #break
             #pass
+            # print(b)
     #except:
     #print("Exception :", sys.exc_info())
     finally:

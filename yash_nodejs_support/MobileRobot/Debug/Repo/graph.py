@@ -14,7 +14,7 @@ class Graph():
         """
         node_list = self.graph[node]
         node_list.append(new_node)
-
+ 
         if new_node not in self.graph:
             self.graph[new_node] = [node]
         else:
@@ -24,15 +24,15 @@ class Graph():
 
 # Driver
 if __name__ == "__main__":
-    g = Graph('S')
+    g = Graph('0')
 
-    g.add_edge('S', 'A')
-    g.add_edge('A', 'B')
-    g.add_edge('A', 'D')
-    g.add_edge('B', 'C')
-    g.add_edge('B', 'F')
-    g.add_edge('D', 'E')
-    g.add_edge('E', 'F')
+    g.add_edge('12', '10')
+    g.add_edge('12', '11')
+    g.add_edge('12', '13')
+    g.add_edge('12', '14')
+    g.add_edge('12', '15')
+    g.add_edge('12', '16')
+    g.add_edge('12', '17')
 
     print(g.graph)
 

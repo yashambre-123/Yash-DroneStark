@@ -16,13 +16,7 @@ def getEndPoint():
 
 def getMode():
     req = urllib.request.urlopen('http://blynk-cloud.com/' + str(getAuthToken("Jivaka")) + '/get/V0')
-    mode = req.read().decode()[2]
-
-    return mode
-
-def getTrigger():
-    req = urllib.request.urlopen('http://blynk-cloud.com/' + str(getAuthToken("Jivaka")) + '/get/V1')
-    trig = req.read().decode()[2]
+    # mo Emergency stop")rig = req.read().decode()[2]
 
     return trig
 

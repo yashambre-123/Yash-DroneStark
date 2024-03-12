@@ -13,7 +13,7 @@ import intf_blynk as b
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--world", type=str, default="/home/pi/Documents/MobileRobot/Debug/Repo/newQRmap.json")
+parser.add_argument("--world", type=str, default="/home/dronestark/Yash-DroneStark/yash_nodejs_support/MobileRobot/Debug/Repo/newQRmap.json")
 parser.add_argument("--start", type=int, default=0)
 parser.add_argument("--end", type=int, default=0)
 parser.add_argument("--room", type=int, default=1)
@@ -127,7 +127,9 @@ def Go():
     direction_resolve = {0:"B", 1:"L", 2:"F", 3:"R"}
     indicators = {"red":"%23CC0000", "green":"%230FF000"}
 
-    current_state = "W"
+    current_state = "W" #original one
+    # current_state = "L"
+    # current_state = "I"
     prev_state = current_state
     set_init = -1       # no goal set
     set_ret = 0         # not return
@@ -136,23 +138,50 @@ def Go():
 
     trig = 0
     
+    # camera = cv2.VideoCapture(0)
+    # _, frame = camera.read()
+    # frame = cv2.resize(frame, (240, 180), cv2.INTER_AREA)
+    
+    # cv2.imshow("my original frame: ", frame)
+    # if cv2.waitKey(1) == ord('c'):
+    #     print("nothing just to stop the camera")
+    
+    camera = cv2.VideoCapture(0)
+    
     while True:
+        # camera = cv2.VideoCapture(0)
+        _, frame = camera.read()
+        frame = cv2.resize(frame, (240, 180), cv2.INTER_AREA)
+    
+        cv2.imshow("my original frame: ", frame)
+        if cv2.waitKey(1) == ord('c'):
+            print("nothing just to stop the camera")
+        
+        print("BRAKE: ", brake)
         if brake == 1:
             current_state = "E"
-        elif cam_flag == 1:
-            _, frame = camera.read()
-            try:
-                frame = cv2.resize(frame, (240, 180), cv2.INTER_AREA)
-            except:
-                print("Some error with camera buffer")
-                continue
+        print("my name")
+        # elif cam_flag == 1:
+        #     _, frame = camera.read()
+            # try:
+            #     frame = cv2.resize(frame, (240, 180), cv2.INTER_AREA)
+            # except:
+            #     print("Some error with camera buffer")
+            #     continue
+        # camera = cv2.VideoCapture(0)
+        # _, frame = camera.read()
+        # frame = cv2.resize(frame, (240, 180), cv2.INTER_AREA)
+            
             #cv2.imshow("frame", frame)
             #if cv2.waitKey(1) & 0xFF == ord('q'):
             #    pass
 
-        if(current_state == "L"):            
+        if(current_state == "L"):
+            print("ds")         
             prev_state = current_state
             checkBlue = m.checkBlueColor(frame)
+            print("CHECK BLUE: ", checkBlue)
+            print("DECODE COUNT: ", decodeCount)
 
             if(checkBlue == 1 and decodeCount == 0):
                 #m.stop_no_line()
@@ -176,8 +205,8 @@ def Go():
                     noQrCount = 0
                 noLineCount = m.findLine(frame, noLineCount)
                 if noLineCount > 12:
-                    b.setLEDColor(indicators["red"])
-                    b.setLED(255)
+                    # b.setLEDColor(indicators["red"])
+                    # b.setLED(255)
                     noLineCount = 0
                 #elif noLineCount == 0:
                 #    b.setLEDColor(indicators["green"])
@@ -188,20 +217,37 @@ def Go():
                     decodeCount += 1
                 if(decodeCount > 100):
                     decodeCount = 0
+            print("CURRENT STATE: ", current_state)
 
         elif(current_state == "W"):
+            
+            # camera = cv2.VideoCapture(0)
+            # _, frame = camera.read()
+            # frame = cv2.resize(frame, (240, 180), cv2.INTER_AREA)
+            # cv2.imshow("my original frame: ", frame)
+            # if cv2.waitKey(1) == ord('c'):
+            #     print("nothing just to stop the camera")
 
             prev_state = current_state
             trig = 0
-            b.setLED(0)
-            b.setLEDColor(indicators["green"])
+            # b.setLED(0)
+            # b.setLEDColor(indicators["green"])
+            # print("Yash")
             print("\nWAITING FOR USER COMMAND\n")
-            while(trig != 1):
-                trig = int(b.getTrigger())
-            b.setLED(255)
+            # print("Ambre")
+            # print("dronestark")
+            # print("office")
+            # while(trig != 1):
+            #     trig = int(b.getTrigger())
+            # b.setLED(255)
 
-            bed = int(b.getEndPoint())
-            mode = int(b.getMode())
+            # bed = int(b.getEndPoint())
+            # mode = int(b.getMode())
+            bed = 5
+            
+            print("SET INIT: ", set_init)
+            print("BRAKE: ", brake)
+            print("CAM FLAG: ", cam_flag)
 
             if set_init != -1:
                 if direction_resolve[direction] == "F":
@@ -214,39 +260,55 @@ def Go():
                 start_node = motionPath[-2]     # second last point if node wasn't home node
             else:
                 start_node = home_node
+                # start_node = 2
                 #m.clear_no_line()
             if brake == 1:
                 m.clear_no_line()
                 brake = 0
-            #end_node = start_node
-            if mode == 1:
-                end_node = bed
-            elif mode == 2:
-                end_node = 0
-                set_ret = 1
+            # end_node = start_node
+            # if mode == 1:
+            #     end_node = bed
+            # elif mode == 2:
+            #     end_node = 0
+            #     set_ret = 1
+            
+            end_node = bed
 
             decodeCount = 0
             current_state = "I"
+            print("START NODE: ", start_node)
+            print("END NODE: ", end_node)
             if start_node == end_node:      # if done check pressed at start, then return to wait state
                 current_state = "W"
                         
             # cycle camera
             if cam_flag == 1:
-                camera.release()
+                # camera.release()
                 cam_flag = 0
             if cam_flag == 0:
-                camera = cv2.VideoCapture(0)
+                # camera = cv2.VideoCapture(0)
                 cam_flag = 1
 
         elif(current_state == "J"):
-            b.setLEDColor(indicators["green"])
-            b.setLED(255)
+            # b.setLEDColor(indicators["green"])
+            # b.setLED(255)
+            proxy_cnt = 0
             prev_state = current_state
             print("State J")
             if(decodeCount == 0):
-                temp = prev_node
+                # temp = prev_node
+                qr_data = str(qr_data)
+                updated_qr_data = qr_data.replace('b','',1)
+                # print("UPDATED QR DATA: ", updated_qr_data)
+                cur_node = updated_qr_data[1]
                 prev_node = cur_node
-                cur_node = int(qr_data)
+                temp = prev_node
+                # qr_data = str(qr_data)
+                # updated_qr_data = qr_data.replace('b','',1)
+                # # print("UPDATED QR DATA: ", updated_qr_data)
+                # cur_node = updated_qr_data[1]
+                # cur_node = int(qr_data)
+                print("CUR NODE MERA: ", cur_node)
                 if cur_node == prev_node:
                     prev_node = temp
                     proxy_cnt -= 1
@@ -266,6 +328,7 @@ def Go():
                 if(valid == 0):
                     if(cur_node != end_node):
                         arok = setDirection(direction_resolve[direction], str(node_type))
+                        print("AROK: ", arok)
                         if node_type == "B":
                             current_state = "W"
                             pullBrake(100)
@@ -322,7 +385,10 @@ def Go():
 
         elif(current_state == "I"):
             prev_state = current_state
-            motionPath = getMotionPath(worldGraph, start_node, end_node)        # get path to follow
+            print("MY START NODE IS: ",  start_node)
+            print("MY END NODE IS: ", end_node)
+            motionPath  = getMotionPath(worldGraph, start_node, end_node)        # get path to follow
+            print("OUR MOTION PATH: ", motionPath)
             
             print("*************************************")
             print("INITIALIZATION VALUES")
@@ -353,9 +419,9 @@ def Go():
             print(prev_state)
 
             pullBrake(20)
-            while int(b.checkEmergency()) == 1:
-                b.setLEDColor(indicators["red"])
-                b.toggleLED()
+            # while int(b.checkEmergency()) == 1:
+                # b.setLEDColor(indicators["red"])
+                # b.toggleLED()
             m.clear_no_line()
             temp = current_state
             current_state = prev_state
@@ -370,7 +436,7 @@ def Go():
                 camera = cv2.VideoCapture(0)
                 cam_flag = 1
             brake = 0
-            b.setLEDColor(indicators["green"])
+            # b.setLEDColor(indicators["green"])
                                        
 
 
@@ -380,17 +446,21 @@ def lineFunc():
     while True:
         _, frame = camera.read()
         frame = cv2.resize(frame, (240, 180), cv2.INTER_AREA)
-        m.findLine(frame)
+        # cv2.imshow()
+        a = m.findLine(frame, noLineCount)
+        # cv2.imshow("Mobo vision",b)
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     pass
         if(i == 10):
             print(i)
-            pullBrake()
+            pullBrake(i)
             i = 0
         i += 1
 
 if __name__ == "__main__":
     #getMotionPath(2,5)
-    
     if(args.mode == 0):
+        print("Ambre")
         Go()
     elif(args.mode == 2):
         pass
@@ -400,5 +470,6 @@ if __name__ == "__main__":
         #    getUserCmd(conn)
     else:
         print("Just following that yellow line")
+        noLineCount = 0
         lineFunc()
     

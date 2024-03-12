@@ -250,10 +250,14 @@ void modeAuto(){
     //out = serialdata.decodeData(serialdata.data);
     serialdata.decodeData(serialdata.data);
     out = serialdata.data.angle;
-  }  
-  noInterrupts();
+//    Serial.println("asadnasdadnanmn");
+  }
+//  Serial.println("mannered");
+//  noInterrupts();
   //Serial.println(serialdata.data.t);
   if(serialdata.data.t == 'L'){
+    Serial.println("Left");
+//    Serial.println(10);
     out = 0;
     //smoothShift(0,0,FORWARD,FORWARD);    
     turnVehicle(LEFT);
@@ -263,6 +267,8 @@ void modeAuto(){
     return;
   }
   if(serialdata.data.t == 'R'){
+    Serial.println("Right");
+//    Serial.println(20);
     out = 0;
     //smoothShift(0,0,FORWARD,FORWARD);
     turnVehicle(RIGHT);
@@ -272,6 +278,7 @@ void modeAuto(){
     return;
   }
   if(serialdata.data.t == 'U'){
+    Serial.println("About Turn");
     out = 0;
     aboutTurnVehicle();
     serialdata.data.t = 'N';
@@ -280,6 +287,8 @@ void modeAuto(){
     return;
   }
   if(serialdata.data.t == 'F'){
+    Serial.println("Forward");
+//    Serial.println(30);
     out = 0;
     kickStart();
     serialdata.data.t = 'N';
@@ -288,6 +297,7 @@ void modeAuto(){
     return;
   }
   if(serialdata.data.t == 'P'){
+    Serial.println("Reverse");
     out = 0;
     reverseMotion();
     serialdata.data.t = 'N';
@@ -335,16 +345,19 @@ void modeAuto(){
   out = filter_recv_value(out);
 
   smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD);
+//  Serial.println("out is greater than 360");
   }
 
   else {            
     out = filter_recv_value(out);
     prevAngle = out;
 
-    smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD);    
+    smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD);
+//    Serial.println("out is lesser than 360");
   }
   //}
   //debugOutputs();
+//  delay(0.1);
   return;
 }
 
@@ -405,39 +418,45 @@ void testFunc(){
 }
 
 void loop() {
-  
-  wdt_reset();
-  modeSwitch = pulseIn(switchPin, HIGH);
-  em_stop = pulseIn(dist_pin, HIGH); 
-  //debugOutputs(); 
-  if(modeSwitch < 10){
-    //Serial.println("Start the goddamn remote");
-    Serial.flush();
-    noInterrupts();
-    smoothShift(0,0,FORWARD, FORWARD);
-  }
-  else if(modeSwitch > 1400){
-    //Serial.println("In mode manual");
-    digitalWrite(13, LOW);
-    noInterrupts();
-    sys_state = MANUAL;
-   
-    modeManual();        
-  }
-  else{
-    //Serial.println("In mode auto");
-    if(em_stop < 1000){
-      digitalWrite(13, LOW);
-      sys_state = AUTO;
-      interrupts();            
-    }
-    else{
-      noInterrupts();
-      smoothShift(0,0, FORWARD, FORWARD);
-      Serial.flush();    
-      digitalWrite(13, HIGH);
-    }
 
-  }  
+//  Serial.println("start here");
+
+  modeAuto();
+  
+//  Serial.println("end here");
+
+//  wdt_reset();
+//  modeSwitch = pulseIn(switchPin, HIGH);
+//  em_stop = pulseIn(dist_pin, HIGH); 
+//  //debugOutputs(); 
+//  if(modeSwitch < 10){
+//    //Serial.println("Start the goddamn remote");
+//    Serial.flush();
+//    noInterrupts();
+//    smoothShift(0,0,FORWARD, FORWARD);
+//  }
+//  else if(modeSwitch > 1400){
+//    //Serial.println("In mode manual");
+//    digitalWrite(13, LOW);
+//    noInterrupts();
+//    sys_state = MANUAL;
+//   
+//    modeManual();        
+//  }
+//  else{
+//    //Serial.println("In mode auto");
+//    if(em_stop < 1000){
+//      digitalWrite(13, LOW);
+//      sys_state = AUTO;
+//      interrupts();            
+//    }
+//    else{
+//      noInterrupts();
+//      smoothShift(0,0, FORWARD, FORWARD);
+//      Serial.flush();    
+//      digitalWrite(13, HIGH);
+//    }
+//
+//  }  
   
 }

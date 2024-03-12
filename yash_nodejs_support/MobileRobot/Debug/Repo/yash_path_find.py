@@ -9,11 +9,18 @@ from graph import Graph
 
 def sampleGraph():
     g = Graph('0')
-    g.add_edge('0', '1')
-    g.add_edge('0', '2')
-    g.add_edge('1', '3')
-    g.add_edge('1', '4')
-    g.add_edge('3', '5')
+    g.add_edge('0', '11')
+    g.add_edge('11', '15')
+    g.add_edge('11', '22')
+    g.add_edge('11', '12')
+    g.add_edge('12', '16')
+    g.add_edge('12', '21')
+    g.add_edge('12', '13')
+    g.add_edge('13', '17')
+    g.add_edge('13', '20')
+    g.add_edge('13', '14')
+    g.add_edge('14', '18')
+    g.add_edge('14', '19')
 
     return g
 
@@ -43,19 +50,18 @@ def getWorld(data_file, room_no):
     return g
 
 
-def getPath(g, start='2', end='5'):
+def getPath(g, start, end):
     #print(g.graph)
     #start = ['2']
     #end = ['5']
     done = set()
     #path = list()
-    q = Queue(maxsize=100)
-    m = LifoQueue(maxsize=100)
+    q = Queue(maxsize=500)
+    m = LifoQueue(maxsize=500)
 
     q.put(start)
     while not q.empty():
         i = q.get()
-        print("IIII: ", i)
         m.put(i)
         #path.append(i)
         if i == end:
@@ -93,8 +99,8 @@ def getPath(g, start='2', end='5'):
 
 
 if __name__ == "__main__":
-    #json_data_file = "sampleWorldJson.json"
-    json_data_file = "newQRmap.json"
+    #json_data_file = "yash_new_qr_map.json"
+    json_data_file = "yash_new_qr_map.json"
     worldMap = getWorld(json_data_file, 1)
     #worldMap = sampleGraph()
     getPath(worldMap,'0', '9')

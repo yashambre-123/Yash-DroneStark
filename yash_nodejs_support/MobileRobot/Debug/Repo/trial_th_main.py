@@ -5,7 +5,7 @@ import pdb
 import serial, struct
 import cv2
 import time
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 #import wiringpi
 from imutils.video import WebcamVideoStream
 from imutils.video import FPS
@@ -20,7 +20,7 @@ motion = 0
 turn = 0
 mode = 1 
 direction = "straight"
-ser = serial.Serial("/dev/ttyAMA0", baudrate = 115200, bytesize = serial.EIGHTBITS, parity = serial.PARITY_NONE, xonxoff = False, rtscts = False, stopbits = serial.STOPBITS_ONE, timeout = 1, dsrdtr = True)
+ser = serial.Serial("/dev/ttyACM0", baudrate = 115200, bytesize = serial.EIGHTBITS, parity = serial.PARITY_NONE, xonxoff = False, rtscts = False, stopbits = serial.STOPBITS_ONE, timeout = 1, dsrdtr = True)
 
 # register handler for virtual pin V11 reading
 
