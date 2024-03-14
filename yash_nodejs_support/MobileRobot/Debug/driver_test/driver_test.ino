@@ -59,8 +59,8 @@ int reverseSw = 0;
 volatile int sys_state = MANUAL;
 volatile int prev_sys_state = sys_state;
 int turnType = 0;
-CytronMD rightMtr(PWM_DIR, 6, 4);
-CytronMD leftMtr(PWM_DIR, 5, 10);
+CytronMD rightMtr(PWM_DIR, 5, 10);
+CytronMD leftMtr(PWM_DIR, 6, 4);
 
 // ultrasonic variables
 unsigned int dist_pin = 2;   // The Arduino's the Pin2 connection to US-100 Echo / RX
@@ -287,7 +287,7 @@ void modeAuto(){
     return;
   }
   if(serialdata.data.t == 'F'){
-    Serial.println("Forward");
+//    Serial.println("Forward");
 //    Serial.println(30);
     out = 0;
     kickStart();
@@ -324,6 +324,11 @@ void modeAuto(){
     serialdata.data.t = 'N';
     while(1){}
     return;
+  }
+
+  if (serialdata.data.t == 'Z'){
+    Serial.println("STOP");
+    stopThatDamnVehicle = 15;
   }
   
   if(stopForBlue > 10){
@@ -427,6 +432,7 @@ void loop() {
 
 //  wdt_reset();
 //  modeSwitch = pulseIn(switchPin, HIGH);
+////  Serial.println(modeSwitch);
 //  em_stop = pulseIn(dist_pin, HIGH); 
 //  //debugOutputs(); 
 //  if(modeSwitch < 10){
@@ -452,6 +458,7 @@ void loop() {
 //    }
 //    else{
 //      noInterrupts();
+//      Serial.println("yashambre");
 //      smoothShift(0,0, FORWARD, FORWARD);
 //      Serial.flush();    
 //      digitalWrite(13, HIGH);

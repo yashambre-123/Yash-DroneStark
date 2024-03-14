@@ -48,7 +48,6 @@ deltaX = [0]*(N_SLICES-1)
 for q in range(N_SLICES):
     Images.append(Image())
 
-# datapacket = ser.readline()
 
 with open('/home/dronestark/Yash-DroneStark/yash_nodejs_support/MobileRobot/Debug/Repo/ds_node_table.csv', 'r') as read_obj:
         csv_reader = reader(read_obj)
@@ -102,10 +101,6 @@ def aboutTurn():
 def leftTurn():
     print("Left turn")     
     ser.write('L'.encode('utf-8'))
-    # datapacket = ser.readline()
-    # datapacket = str(datapacket,'utf-8')
-    # datapacket = datapacket.strip('\r\n')
-    # print(datapacket)
     #ack = ser.read(1)
     #print(ack) 
     return
@@ -113,10 +108,6 @@ def leftTurn():
 def rightTurn():
     print("Right turn")   
     ser.write('R'.encode('utf-8'))
-    # datapacket = ser.readline()
-    # datapacket = str(datapacket,'utf-8')
-    # datapacket = datapacket.strip('\r\n')
-    # print(datapacket)
     #ack = ser.read(1)
     #print(ack)
     return
@@ -124,10 +115,6 @@ def rightTurn():
 def goForward():
     print("Go forward")     
     ser.write('F'.encode('utf-8'))
-    # datapacket = ser.readline()
-    # datapacket = str(datapacket,'utf-8')
-    # datapacket = datapacket.strip('\r\n')
-    # print(datapacket)
     #ack = ser.read(1)
     #print(ack) 
     return
@@ -355,8 +342,8 @@ def main():
                     # datapacket = datapacket.strip('\r\n')
                     # print(datapacket)
                     
-                    for i in range(len(motionPath)):
-                        print("IIIIIIIIIIII: ", i)
+                    for i in range(len(motionPath) - 1):
+                        print("IIIII: ", i)
                         if (i==0):
                             send_direction = 'S'
                             if (send_direction == 'S'):
@@ -403,50 +390,25 @@ def main():
                                         
                                         if (decodedData != motionPath[i]):
                                             print("wrong qr detected")
-                                        elif (decodedData == motionPath[len(motionPath) - 1]):
-                                            print("--------------REACHED DESTINATION--------------")
-                                            stop_no_line()
-                                            break
                                         else:
                                             send_direction = matrix[my_dict[my_cardinal_direction_list[i-1]]][my_dict[my_cardinal_direction_list[i]]]
-                                            # break
+                                            print("jkashdjskadhjh")
                                             if (send_direction == 'S'):
-                                                # print("i am going forward")
                                                 goForward()
-                                                # datapacket = ser.readline()
-                                                # datapacket = str(datapacket,'utf-8')
-                                                # datapacket = datapacket.strip('\r\n')
-                                                # print(datapacket)
                                             elif (send_direction == 'R'):
                                                 rightTurn()
-                                                # datapacket = ser.readline()
-                                                # datapacket = str(datapacket,'utf-8')
-                                                # datapacket = datapacket.strip('\r\n')
-                                                # print(datapacket)
                                             elif (send_direction == 'L'):
                                                 leftTurn()
-                                                # datapacket = ser.readline()
-                                                # datapacket = str(datapacket,'utf-8')
-                                                # datapacket = datapacket.strip('\r\n')
-                                                # print(datapacket)
                                             elif (send_direction == 'T'):
                                                 aboutTurn()
-                                                # datapacket = ser.readline()
-                                                # datapacket = str(datapacket,'utf-8')
-                                                # datapacket = datapacket.strip('\r\n')
-                                                # print(datapacket)
-                                                
-                                            # print("jklsja")
                                             
-                                            # datapacket = ser.readline()
-                                            # datapacket = str(datapacket,'utf-8')
-                                            # datapacket = datapacket.strip('\r\n')
-                                            # print(datapacket)
-                                            
-                                            # print("dkdljdkj")
+                                            datapacket = ser.readline()
+                                            datapacket = str(datapacket,'utf-8')
+                                            datapacket = datapacket.strip('\r\n')
+                                            print(datapacket)
                                             break
                                 # break
-                    # print("-------------------REACHED DESTINATION-------------------")             
+                    print("-------------------REACHED DESTINATION-------------------")               
                     
                     # if (universal_direction == 'S'):
                     #     goForward()
