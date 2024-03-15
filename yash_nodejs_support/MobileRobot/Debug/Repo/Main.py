@@ -143,9 +143,9 @@ def send_theta(theta_l):
     #    a = struct.unpack("<h",ser.read(2))
     return
 
-def stop_detected_qr_code():
-    print("Stopped detected qr code")
-    ser.write('B'.encode('utf-8'))
+# # def stop_detected_qr_code():
+#     print("Stopped detected qr code")
+#     ser.write('B'.encode('utf-8'))
 
 def findQRcode(frame): 
     #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -304,7 +304,7 @@ def main():
                     # decodedData = str(decodedData)
                     # print("DECODED DATA: ", decodedData)
                     
-                    stop_detected_qr_code()
+                    # stop_detected_qr_code()
                     
                     start_node = decodedData
                     
@@ -408,7 +408,7 @@ def main():
                                         decodedData = decodedData.split("'")
                                         decodedData = int(decodedData[1])
                                         
-                                        stop_detected_qr_code()
+                                        # stop_detected_qr_code()
                                         
                                         if (decodedData != motionPath[i]):
                                             print("wrong qr detected")

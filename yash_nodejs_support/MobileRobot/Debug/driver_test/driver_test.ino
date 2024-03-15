@@ -61,8 +61,8 @@ int reverse = 0;
 volatile int sys_state = MANUAL;
 volatile int prev_sys_state = sys_state;
 int turnType = 0;
-CytronMD rightMtr(PWM_DIR, 5, 10);
-CytronMD leftMtr(PWM_DIR, 6, 4);
+CytronMD rightMtr(PWM_DIR, 6, 4);
+CytronMD leftMtr(PWM_DIR, 5, 10);
 
 // ultrasonic variables
 unsigned int dist_pin = 2;   // The Arduino's the Pin2 connection to US-100 Echo / RX
@@ -351,7 +351,7 @@ void modeAuto(){
   out = prevAngle;
   out = filter_recv_value(out);
 
-  smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD);
+  smoothShift(pid((baseThrottle-out), r_prev, r_acc), pid((baseThrottle+out), l_prev, l_acc), FORWARD, FORWARD);
 //  Serial.println("out is greater than 360");
   }
 
@@ -359,7 +359,7 @@ void modeAuto(){
     out = filter_recv_value(out);
     prevAngle = out;
 
-    smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD);
+    smoothShift(pid((baseThrottle-out), r_prev, r_acc), pid((baseThrottle+out), l_prev, l_acc), FORWARD, FORWARD);
 //    Serial.println("out is lesser than 360");
   }
   //}

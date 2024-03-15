@@ -117,13 +117,14 @@ void smoothShift(int l_spd, int r_spd, int l_dir, int r_dir){
 
 void turnVehicle(int turn_dir){
   smoothShift(0,0, FORWARD, FORWARD);
-  if(turn_dir == LEFT){ 
+//  delay(3000);
+  if(turn_dir == RIGHT){ 
     for(int i =0; i < TURN_TIME - turnType*(0.3*TURN_TIME); i++){
       smoothShift(turnType*baseThrottle, baseThrottle, REVERSE, FORWARD);
       delay(5);
     }
   }
-  if(turn_dir == RIGHT){
+  if(turn_dir == LEFT){
     //smoothShift(baseThrottle, baseThrottle, FORWARD, REVERSE);
     for(int i =0; i < TURN_TIME - turnType*(0.3*TURN_TIME); i++){
       smoothShift(baseThrottle, turnType*baseThrottle, FORWARD, REVERSE);
@@ -222,6 +223,7 @@ int filter_recv_value(int val){
 
 void kickStart(){
   smoothShift(0,0,FORWARD,FORWARD);
+//  delay(3000);
   for(int i =0; i < 180; i++){
       smoothShift(baseThrottle, baseThrottle, FORWARD, FORWARD);
       delay(5);
@@ -258,7 +260,25 @@ void modeAuto(){
     //out = serialdata.decodeData(serialdata.data);
     serialdata.decodeData(serialdata.data);
     out = serialdata.data.angle;
-    Serial.println(out);
+//    delay(1);
+//    Serial.println(out);
+
+    if(out > 360){
+
+  out = prevAngle;
+  out = filter_recv_value(out);
+
+  smoothShift(pid((baseThrottle-out), r_prev, r_acc), pid((baseThrottle+out), l_prev, l_acc), FORWARD, FORWARD);
+//  Serial.println("out is greater than 360");
+  }
+
+  else {            
+    out = filter_recv_value(out);
+    prevAngle = out;
+
+    smoothShift(pid((baseThrottle-out), r_prev, r_acc), pid((baseThrottle+out), l_prev, l_acc), FORWARD, FORWARD);
+//    Serial.println("out is lesser than 360");
+  }
 //    Serial.println("asadnasdadnanmn");
   }
 //  Serial.println("mannered");
@@ -337,8 +357,19 @@ void modeAuto(){
 
   if (serialdata.data.t == 'Z'){
     Serial.println("STOP");
+//    smoothShift(/0,0,FORWARD,FORWARD);
+//    delay(2000);/
     stopThatDamnVehicle = 15;
+    return;
   }
+
+//  if (serialdata.data.t == 'B'){
+//    Serial.println("STOP from QR");
+////    smoothShift(0,0,FORWARD,FORWARD);
+////    delay(2000);
+//    stopForBlue = 15;
+//    return;
+//  }
   
   if(stopForBlue > 10){
     out = 0;
@@ -353,27 +384,29 @@ void modeAuto(){
     return;
   }
  
-  if(out > 360){
-
-  out = prevAngle;
-  out = filter_recv_value(out);
-
-  smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD);
-  Serial.println("out is greater than 360");
-  }
-
-  else {            
-    out = filter_recv_value(out);
-    prevAngle = out;
-
-    smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD);
-    Serial.println("out is lesser than 360");
-  }
+//  if(out > 0){
+//
+//  out = prevAngle;
+//  out = filter_recv_value(out);
+//
+//  smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD);
+////  Serial.println("out is greater than 360");
+//  }
+//
+//  else {            
+//    out = filter_recv_value(out);
+//    prevAngle = out;
+//
+//    smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD);
+////    Serial.println("out is lesser than 360");
+//  }
   //}
   //debugOutputs();
 //  delay(0.1);
   return;
 //  }
+
+///-------------------------------------------------------
   
 //  if(Serial.available() > 0){
 //    char input = Serial.read();
@@ -489,12 +522,12 @@ void modeAuto(){
 //      if(out > 360){
 //        out = prevAngle;
 //        out = filter_recv_value(out);
-//        smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD); 
+//        smoothShift(pid((baseThrottle-out), r_prev, r_acc), pid((baseThrottle+out), l_prev, l_acc), FORWARD, FORWARD);
 //      }
 //      else {            
 //        out = filter_recv_value(out);
 //        prevAngle = out;
-//        smoothShift(pid((baseThrottle+out), l_prev, l_acc), pid((baseThrottle-out), r_prev, r_acc), FORWARD, FORWARD);
+//        smoothShift(pid((baseThrottle-out), r_prev, r_acc), pid((baseThrottle+out), l_prev, l_acc), FORWARD, FORWARD);
 //      }
 //    }  
 //  }
@@ -518,30 +551,30 @@ void setup(){
 
 void loop(){
 
-//  modeAuto();
+  modeAuto();
   
 //  serialEvent();
-//  delay(1);
-////  debugsr();
-//
-  wdt_reset();
-  inputSwitch = pulseIn(switchPin, HIGH);
-  modeSwitch = map(inputSwitch, 1010, 2000, -1, 1);
-  modeSwitch = constrain(modeSwitch, -1, 1);
-  digitalWrite(13, LOW);  
+  delay(1);
+//  debugsr();
 
-  if(modeSwitch >= 0){
-    digitalWrite(13, LOW);
-    noInterrupts();
-    sys_state = MANUAL;
-    modeManual();        
-  }
-  else{
+//  wdt_reset();
+//  inputSwitch = pulseIn(switchPin, HIGH);
+//  modeSwitch = map(inputSwitch, 1010, 2000, -1, 1);
+//  modeSwitch = constrain(modeSwitch, -1, 1);
+//  digitalWrite(13, LOW);  
+//
+//  if(modeSwitch >= 0){
 //    digitalWrite(13, LOW);
-    interrupts();
-    sys_state = AUTO;
-    modeAuto();           
-  }  
+//    noInterrupts();
+//    sys_state = MANUAL;
+//    modeManual();        
+//  }
+//  else{
+////    digitalWrite(13, LOW);
+//    interrupts();
+//    sys_state = AUTO;
+//    modeAuto();           
+//  }  
 }
 
 
