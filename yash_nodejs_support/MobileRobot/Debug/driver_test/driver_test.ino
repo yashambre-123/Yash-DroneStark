@@ -50,12 +50,14 @@ int r_set_spd = 0;
 
 int inputThrottle = 0;
 int inputPan = 0;
+int inputRev = 0;
+int inputSwitch = 0;
 
 int throttle = 0;
 int pan = 0;
 int modeSwitch = 0;
 int reverseSw = 0;
-
+int reverse = 0;
 volatile int sys_state = MANUAL;
 volatile int prev_sys_state = sys_state;
 int turnType = 0;
@@ -267,7 +269,7 @@ void modeAuto(){
     return;
   }
   if(serialdata.data.t == 'R'){
-    Serial.println("Right");
+//    Serial.println("Right");
 //    Serial.println(20);
     out = 0;
     //smoothShift(0,0,FORWARD,FORWARD);
@@ -278,7 +280,7 @@ void modeAuto(){
     return;
   }
   if(serialdata.data.t == 'U'){
-    Serial.println("About Turn");
+//    Serial.println("About Turn");
     out = 0;
     aboutTurnVehicle();
     serialdata.data.t = 'N';
@@ -297,7 +299,7 @@ void modeAuto(){
     return;
   }
   if(serialdata.data.t == 'P'){
-    Serial.println("Reverse");
+//    Serial.println("Reverse");
     out = 0;
     reverseMotion();
     serialdata.data.t = 'N';
@@ -367,33 +369,57 @@ void modeAuto(){
 }
 
 void modeManual(){  
-  stopThatDamnVehicle = 0;
-  stopForBlue = 0;
   Serial.flush();
 
-  
   inputThrottle = pulseIn(throttlePin, HIGH);
   inputPan = pulseIn(panPin, HIGH);
-        
-  //throttle = map(inputThrottle, 1010, 2000, 0, MAX_TH);   // FlySky FS-i6 remote
-  throttle = map(inputThrottle, 1175, 1816, 0, MAX_TH);     // FlySky FS-CT6B remote
-  throttle = constrain(throttle, 0, MAX_TH);
 
-  //pan = map(inputPan, 2000, 1010, -ABS_PAN, ABS_PAN);     // FlySky FS-i6 remote
-  pan = map(inputPan, 1160, 1860, -ABS_PAN, ABS_PAN);       // FlySky FS-CT6B remote
+  
+  
+  if (inputThrottle > 1500){
+    throttle = map(inputThrottle, 1500, 2000, 0, MAX_TH);
+  }
+  else{
+    throttle = 0;
+  }
+  throttle = constrain(throttle, 0, MAX_TH);
+ 
+//  if(1490<inputPan<1510){
+//    pan = 1500;
+////    Serial.println("from");
+//  }
+  
+  pan = map(inputPan, 2000, 1010, -ABS_PAN, ABS_PAN);
   pan = constrain(pan, -ABS_PAN, ABS_PAN);
 
-  if(inputThrottle == 0) throttle = 0;
-  if(inputPan == 0) pan = 0;
-
-  if ((throttle < 3) && (abs(pan) < 3)){
-    reverseSw = pulseIn(reversePin, HIGH);
-  }
-  l_set_spd = throttle + pan;
-  r_set_spd = throttle - pan;
-
-  //debugOutputs();
   
+
+  if (throttle == 0 && pan == 0){
+    inputRev = pulseIn(reversePin, HIGH);
+    
+    if (inputRev > 1500){
+      reverse = map(inputRev, 1010, 2000, -1, 1);
+      reverse = 1;
+    }
+    else{
+      reverse = 0;
+    }
+    reverse = constrain(reverse, -1, 1);
+    
+
+    
+    delay(500);
+  }
+  
+  if (reverse <= 0) {
+    l_set_spd = throttle + pan;
+    r_set_spd = throttle - pan;
+  }
+  else{
+    l_set_spd = -throttle - pan;
+    r_set_spd = -throttle + pan;
+  }
+
   smoothShift(l_set_spd, r_set_spd, FORWARD, FORWARD);
 }
 
@@ -450,7 +476,8 @@ void loop() {
 //    modeManual();        
 //  }
 //  else{
-//    //Serial.println("In mode auto");
+//    modeAuto();
+    //Serial.println("In mode auto");
 //    if(em_stop < 1000){
 //      digitalWrite(13, LOW);
 //      sys_state = AUTO;
@@ -463,7 +490,6 @@ void loop() {
 //      Serial.flush();    
 //      digitalWrite(13, HIGH);
 //    }
-//
-//  }  
+
+  }  
   
-}

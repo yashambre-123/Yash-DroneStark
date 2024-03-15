@@ -141,7 +141,11 @@ def send_theta(theta_l):
     #ack = ser.read(1)
     #if(ack == b'R'):
     #    a = struct.unpack("<h",ser.read(2))
-    return  
+    return
+
+def stop_detected_qr_code():
+    print("Stopped detected qr code")
+    ser.write('B'.encode('utf-8'))
 
 def findQRcode(frame): 
     #gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -288,7 +292,7 @@ def main():
             #checkBlue, imgBlue = checkBlueColor(frame)
             checkBlue = checkBlueColor(frame)
             if(checkBlue == 1):  
-                stop_no_line()                                
+                # stop_no_line()                                
                 decodedData = findQRcode(frame)
                 if decodedData == "":
                     # print("show the complete qr code")
@@ -299,6 +303,8 @@ def main():
                     decodedData = int(decodedData[1])
                     # decodedData = str(decodedData)
                     # print("DECODED DATA: ", decodedData)
+                    
+                    stop_detected_qr_code()
                     
                     start_node = decodedData
                     
@@ -391,7 +397,8 @@ def main():
                                     else:
                                         print("FOLLOWING THE LINE")
                                     
-                                elif (checkBlue == 1):    
+                                elif (checkBlue == 1):
+                                       
                                     decodedData = findQRcode(frame1)
                                     if decodedData == "":
                                         # print("show the complete qr code")
@@ -401,11 +408,12 @@ def main():
                                         decodedData = decodedData.split("'")
                                         decodedData = int(decodedData[1])
                                         
+                                        stop_detected_qr_code()
+                                        
                                         if (decodedData != motionPath[i]):
                                             print("wrong qr detected")
                                         elif (decodedData == motionPath[len(motionPath) - 1]):
                                             print("--------------REACHED DESTINATION--------------")
-                                            stop_no_line()
                                             break
                                         else:
                                             send_direction = matrix[my_dict[my_cardinal_direction_list[i-1]]][my_dict[my_cardinal_direction_list[i]]]
