@@ -414,6 +414,7 @@ def main():
                                             print("wrong qr detected")
                                         elif (decodedData == motionPath[len(motionPath) - 1]):
                                             print("--------------REACHED DESTINATION--------------")
+                                            sys.exit()
                                             break
                                         else:
                                             send_direction = matrix[my_dict[my_cardinal_direction_list[i-1]]][my_dict[my_cardinal_direction_list[i]]]

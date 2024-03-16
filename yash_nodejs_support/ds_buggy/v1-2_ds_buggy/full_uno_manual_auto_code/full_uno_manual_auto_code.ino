@@ -541,7 +541,9 @@ void serialEvent(){
 // --- System Code ---
 void setup(){
   Serial.begin(115200);
-  wdt_enable(WDTO_4S);    // 4 second watchdog timer
+//  wdt_disable();
+//  delay(3000);
+//  wdt_enable(WDTO_4S);    // 4 second watchdog timer
   pinMode(13, OUTPUT);
   pinMode(throttlePin, INPUT);
   pinMode(panPin, INPUT);
@@ -551,30 +553,30 @@ void setup(){
 
 void loop(){
 
-  modeAuto();
+//  modeAuto();
   
 //  serialEvent();
-  delay(1);
+//  delay(1);
 //  debugsr();
 
 //  wdt_reset();
-//  inputSwitch = pulseIn(switchPin, HIGH);
-//  modeSwitch = map(inputSwitch, 1010, 2000, -1, 1);
-//  modeSwitch = constrain(modeSwitch, -1, 1);
-//  digitalWrite(13, LOW);  
-//
-//  if(modeSwitch >= 0){
+  inputSwitch = pulseIn(switchPin, HIGH);
+  modeSwitch = map(inputSwitch, 1010, 2000, -1, 1);
+  modeSwitch = constrain(modeSwitch, -1, 1);
+  digitalWrite(13, LOW);  
+
+  if(modeSwitch >= 0){
+    digitalWrite(13, LOW);
+    noInterrupts();
+    sys_state = MANUAL;
+    modeManual();        
+  }
+  else{
 //    digitalWrite(13, LOW);
-//    noInterrupts();
-//    sys_state = MANUAL;
-//    modeManual();        
-//  }
-//  else{
-////    digitalWrite(13, LOW);
-//    interrupts();
-//    sys_state = AUTO;
-//    modeAuto();           
-//  }  
+    interrupts();
+    sys_state = AUTO;
+    modeAuto();           
+  }  
 }
 
 
