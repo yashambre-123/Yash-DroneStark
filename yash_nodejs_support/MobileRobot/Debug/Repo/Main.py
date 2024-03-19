@@ -194,8 +194,8 @@ def findLine(frame, noLineCount):
     #    noLineCount = 0
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     # define range of yellow color in HSV
-    lower_thresh = np.array([25,90,20])
-    upper_thresh = np.array([50,255,255])    
+    lower_thresh = np.array([5,178,69])
+    upper_thresh = np.array([26,255,255])    
     mask = cv2.inRange(hsv, lower_thresh, upper_thresh)
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)            
     # Bitwise-AND mask and original image
@@ -378,6 +378,7 @@ def main():
                         else:
                             # camera1 = cv2.VideoCapture(1)
                             # universal_direction = matrix[my_dict[my_direction_list[i]]][my_dict[my_direction_list[i+1]]]
+                            goForward()
                             while True:
                                 # print("FOLLOW MODE")
                                 _1, frame1 = camera.read() 
@@ -412,6 +413,8 @@ def main():
                                         
                                         if (decodedData != motionPath[i]):
                                             print("wrong qr detected")
+                                            # goForward()
+                                            
                                         elif (decodedData == motionPath[len(motionPath) - 1]):
                                             print("--------------REACHED DESTINATION--------------")
                                             sys.exit()

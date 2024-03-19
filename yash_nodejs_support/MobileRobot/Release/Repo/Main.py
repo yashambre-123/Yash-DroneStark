@@ -123,8 +123,8 @@ def findLine(frame):
     lineFoundFlag = 0
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     # define range of yellow color in HSV
-    lower_thresh = np.array([25,90,20])
-    upper_thresh = np.array([50,255,255])    
+    lower_thresh = np.array([5,178,69])
+    upper_thresh = np.array([26,255,255])    
     mask = cv2.inRange(hsv, lower_thresh, upper_thresh)
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)            
     # Bitwise-AND mask and original image

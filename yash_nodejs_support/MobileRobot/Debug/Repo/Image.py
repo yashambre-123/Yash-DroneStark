@@ -15,8 +15,8 @@ class Image:
         #ret, thresh = cv2.threshold(imgray,0,255,cv2.THRESH_BINARY_INV) #Get Threshold
         hsv = cv2.cvtColor(self.image, cv2.COLOR_BGR2HSV)
         # define range of blue color in HSV
-        lower_blue = np.array([30,120,20])
-        upper_blue = np.array([45,255,255])
+        lower_blue = np.array([5,178,69])
+        upper_blue = np.array([26,255,255])
 
         # Threshold the HSV image to get only blue colors
         thresh = cv2.inRange(hsv, lower_blue, upper_blue)

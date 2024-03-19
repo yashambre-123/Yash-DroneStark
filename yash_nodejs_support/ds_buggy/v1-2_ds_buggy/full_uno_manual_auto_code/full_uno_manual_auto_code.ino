@@ -222,7 +222,7 @@ int filter_recv_value(int val){
 }
 
 void kickStart(){
-  smoothShift(0,0,FORWARD,FORWARD);
+//  smoothShift(0,0,FORWARD,FORWARD);
 //  delay(3000);
   for(int i =0; i < 180; i++){
       smoothShift(baseThrottle, baseThrottle, FORWARD, FORWARD);
@@ -319,7 +319,8 @@ void modeAuto(){
 //    Serial.println("Forward");
 //    Serial.println(30);
     out = 0;
-    kickStart();
+//    kickStart();
+    smoothShift(baseThrottle, baseThrottle, FORWARD, FORWARD);
     serialdata.data.t = 'N';
     stopThatDamnVehicle = 0;
     stopForBlue = 0;
@@ -543,7 +544,7 @@ void setup(){
   Serial.begin(115200);
 //  wdt_disable();
 //  delay(3000);
-//  wdt_enable(WDTO_4S);    // 4 second watchdog timer
+  wdt_enable(WDTO_4S);    // 4 second watchdog timer
   pinMode(13, OUTPUT);
   pinMode(throttlePin, INPUT);
   pinMode(panPin, INPUT);
